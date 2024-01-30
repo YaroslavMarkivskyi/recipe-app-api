@@ -1,9 +1,9 @@
 """
-Sample tests"""
+Sample tests
+"""
 
 from django.test import TestCase
-
-from app import calc 
+from app import calc
 
 
 class CalcTests(TestCase):

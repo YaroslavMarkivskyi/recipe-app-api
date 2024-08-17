@@ -1,6 +1,18 @@
 """
-Test for the Django admin modifications.
+Tests for modifications in the Django admin site.
+
+This module contains test cases for verifying customizations
+and functionalities added to the Django admin site.
+It includes tests for listing, editing,
+and creating users in the admin interface.
+
+Dependencies:
+- django.test.TestCase
+- django.contrib.auth.get_user_model
+- django.urls.reverse
+- django.test.Client
 """
+
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -8,40 +20,42 @@ from django.test import Client
 
 
 class AdminSiteTests(TestCase):
-    """Tests for Django admin."""
+    """Tests for Django admin site modifications."""
 
     def setUp(self):
-        """Create user and client."""
+        """Set up test environment by creating
+        a superuser and a regular user."""
         self.client = Client()
         self.admin_user = get_user_model().objects.create_superuser(
-            email='admin@example.com',
-            password='testpass123',
+            email="admin@example.com",
+            password="testpass123",
         )
         self.client.force_login(self.admin_user)
         self.user = get_user_model().objects.create_user(
-            email='user@example.com',
-            password='testpass123',
-            name='Test User',
+            email="user@example.com",
+            password="testpass123",
+            name="Test User",
         )
 
-    def tests_users_list(self):
-        """Test that users are listed on page."""
-        url = reverse('admin:core_user_changelist')
-        res = self.client.get(url)
+    def test_users_list(self):
+        """Test that the list of users
+        is displayed on the admin users page."""
+        url = reverse("admin:core_user_changelist")
+        response = self.client.get(url)
 
-        self.assertContains(res, self.user.name)
-        self.assertContains(res, self.user.email)
+        self.assertContains(response, self.user.name)
+        self.assertContains(response, self.user.email)
 
     def test_edit_user_page(self):
-        """Test the edit user page works."""
-        url = reverse('admin:core_user_change', args=[self.user.id])
-        res = self.client.get(url)
+        """Test that the edit user page is accessible."""
+        url = reverse("admin:core_user_change", args=[self.user.id])
+        response = self.client.get(url)
 
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response.status_code, 200)
 
     def test_create_user_page(self):
-        """Test the create user page works."""
-        url = reverse('admin:core_user_add')
-        res = self.client.get(url)
+        """Test that the create user page is accessible."""
+        url = reverse("admin:core_user_add")
+        response = self.client.get(url)
 
-        self.assertEqual(res.status_code, 200)
+        self.assertEqual(response.status_code, 200)
